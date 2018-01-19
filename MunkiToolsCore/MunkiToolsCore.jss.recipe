@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Description</key>
+	<string>Downloads the latest version of Munki's core tools, and makes a pkg of it then uploads it to the JSS. Note that this recipe does not create a self-service recipe and therefore does not have an icon. The policy creates a trigger.</string>
+	<key>Identifier</key>
+	<string>com.grahamrpugh.autopkg.jss.MunkiToolsCore</string>
+    <key>ParentRecipe</key>
+    <string>com.grahamrpugh.autopkg.pkg.MunkiToolsCore</string>
+	<key>Input</key>
+	<dict>
+        <key>NAME</key>
+		<string>MunkiToolsCore</string>
+        <key>PROD_NAME</key>
+		<string>%NAME%</string>
+        <key>LANGUAGE</key>
+		<string>ML</string>
+		<key>POLICY_LANGUAGE</key>
+        <string/>
+		<key>CATEGORY</key>
+		<string>Administration</string>
+        <key>POLICY_CATEGORY</key>
+		<string>Untested</string>
+		<key>POLICY_TEMPLATE</key>
+		<string>MunkiToolsCore-PolicyTemplate.xml</string>
+	</dict>
+	<key>MinimumVersion</key>
+	<string>0.4.0</string>
+    <key>Process</key>
+	<array>
+        <dict>
+            <key>Processor</key>
+            <string>StopProcessingIf</string>
+            <key>Comment</key>
+            <string>Checks if the file already exists in the cache</string>
+            <key>Arguments</key>
+            <dict>
+                <key>predicate</key>
+                <!-- Depending on the processor in the parent recipe, either download_changed (returned by URLDownloader)
+                or new_package_request (returned by PkgCreator and AppPkgCreator) will be used to the left of the ==. -->
+                <string>download_changed == False</string>
+            </dict>
+        </dict>
+		<dict>
+            <key>Processor</key>
+			<string>JSSImporter</string>
+			<key>Arguments</key>
+			<dict>
+                <key>pkg_path</key>
+                <string>%RECIPE_CACHE_DIR%/repack/munkitools_core.pkg</string>
+				<key>category</key>
+				<string>%CATEGORY%</string>
+				<key>policy_category</key>
+				<string>%POLICY_CATEGORY%</string>
+				<key>policy_template</key>
+				<string>%POLICY_TEMPLATE%</string>
+				<key>prod_name</key>
+				<string>%NAME%</string>
+			</dict>
+		</dict>
+	</array>
+</dict>
+</plist>
